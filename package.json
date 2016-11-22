@@ -1,0 +1,29 @@
+{
+  "name": "voting-app-fcc",
+  "version": "1.0.0",
+  "description": "code for voting-app challenge on free code camp",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/caype/voting-app-fcc.git"
+  },
+  "author": "Chaya",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/caype/voting-app-fcc/issues"
+  },
+  "homepage": "https://github.com/caype/voting-app-fcc#readme",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "ejs": "^2.5.2",
+    "express": "^4.14.0",
+    "express-session": "^1.14.2",
+    "mongoose": "^4.6.8",
+    "passport": "^0.3.2",
+    "passport-google-plus": "^0.5.1"
+  }
+}
