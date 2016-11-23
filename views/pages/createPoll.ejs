@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Create a POLL</title>
+    <%- include ../partials/styles.ejs %>
+</head>
+
+<body>
+
+    <%- include ../partials/header.ejs %>
+
+        <main>
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <form class="" action="index.html" method="post">
+                            <div class="form-group">
+                                <label for="userPollDesc"><h4>Enter POLL Description</h4></label>
+                                <input type="text" class="form-control" id="userPollDesc" placeholder="Describe your POLL">
+                            </div>
+                            <br>
+                            <div class="form-group">
+                              <label for="userPollDesc"><h4>Enter POLL options</h4></label>
+                            </div>
+                            <div id="moreOptions">
+                                <input type="text" class="form-control" id="options" placeholder="Enter Option detail">
+                            </div>
+                            <div class="form-group" style="margin-top:20px;">
+                                <a href="#" id="addOption" class="btn btn-primary btn-lg btn-block">Add option</a>
+                            </div>
+                            <br>
+                            <div class="form-group">
+                              <a href="#" id="submitCreatedPoll" class="btn btn-success btn-lg btn-block">CREATE POLL</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <%- include ../partials/scripts.ejs %>
+</body>
+
+</html>

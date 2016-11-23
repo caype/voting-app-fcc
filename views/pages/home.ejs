@@ -1,1 +1,28 @@
-hello
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Voting App by Free Code Camp</title>
+    <%- include ../partials/styles.ejs %>
+</head>
+
+<body>
+
+  <%- include ../partials/header.ejs %>
+
+  <main>
+
+    <div class="container-fluid">
+      <div class="jumbotron">
+          <h1 class="text-center">Voting App!</h1>
+          <h3 class="text-center"><a href="/create">CREATE </a>a poll or <a href="/polls">VOTE</a> for an existing poll</h3>
+      </div>
+    </div>
+
+  </main>
+
+  <%- include ../partials/scripts.ejs %>
+</body>
+
+</html>

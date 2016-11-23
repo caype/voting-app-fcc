@@ -4,8 +4,10 @@ var passport = require("passport");
 var session = require('express-session');
 
 var app = new express();
+
 app.set('view engine','ejs');
-app.use('/public', express.static(__dirname + '/public'));
+app.use(express.static(__dirname+'/public'));
+
 require('./config/passport')(passport);
 
 mongoose.connect(process.env.MONGO_URI);
@@ -24,9 +26,9 @@ var port = process.env.PORT || 8080;
 
 //routes
 
-var open = require(__dirname+"/Routes/open")(passport);
+var appRoutes = require(__dirname+"/Routes/appRoutes")(passport);
 
-app.use('/',open);
+app.use('/',appRoutes);
 
 app.listen(port,  function () {
 	console.log('Node.js listening on https://fcc-webapps-chayakrishnaprasad.c9users.io ');
