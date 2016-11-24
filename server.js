@@ -2,9 +2,11 @@ var express = require("express");
 var mongoose = require("mongoose");
 var passport = require("passport");
 var session = require('express-session');
+var morgan  = require('morgan');
+var cookieParser = require('cookie-parser');
+var flash    = require('connect-flash');
 
 var app = new express();
-
 app.set('view engine','ejs');
 app.use(express.static(__dirname+'/public'));
 
@@ -18,6 +20,9 @@ app.use(session({
 	resave: true,
 	saveUninitialized: true
 }));
+app.use(morgan('dev')); // log every request to the console
+app.use(cookieParser()); // read cookies (needed for auth)
+app.use(flash());
 
 app.use(passport.initialize());
 app.use(passport.session());
