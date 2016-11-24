@@ -10,7 +10,7 @@ app.use(express.static(__dirname+'/public'));
 
 require('./config/passport')(passport);
 
-mongoose.connect(process.env.MONGO_URI);
+mongoose.connect("mongodb://chaya:admin@ds149207.mlab.com:49207/freecodecamplearn");
 mongoose.Promise = global.Promise;
 
 app.use(session({
