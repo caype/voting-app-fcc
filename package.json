@@ -19,18 +19,17 @@
   "homepage": "https://github.com/caype/voting-app-fcc#readme",
   "dependencies": {
     "body-parser": "^1.15.2",
+    "connect-flash": "*",
+    "cookie-parser": "*",
     "ejs": "^2.5.2",
     "express": "^4.14.0",
     "express-session": "^1.14.2",
+    "method-override": "*",
     "mongoose": "^4.6.8",
-    "morgan": "^1.7.0",
-    "passport": "^0.3.2",
+    "morgan": "*",
+    "passport": "*",
     "passport-facebook": "*",
     "passport-google-oauth": "*",
-    "passport-twitter": "*",
-    "morgan":"*",
-    "cookie-parser": "*",
-    "method-override": "*",
-    "connect-flash":"*"
+    "passport-twitter": "*"
   }
 }

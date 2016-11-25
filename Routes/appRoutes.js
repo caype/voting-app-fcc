@@ -31,11 +31,20 @@ module.exports = function(passport) {
         passport.authenticate('google', {
             successRedirect: '/profile',
             failureRedirect: '/'
+    }));
+
+    router.get('/auth/twitter', passport.authenticate('twitter'));
+
+    router.get('/auth/twitter/callback',
+        passport.authenticate('twitter', {
+            successRedirect : '/profile',
+            failureRedirect : '/'
         }));
+
     router.get('/delete',function(req,res){
       User.find({ id:333 }).remove().exec();
       res.send('done');
-    })
+    });
 
     return router;
 };

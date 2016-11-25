@@ -1,4 +1,7 @@
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+var TwitterStrategy  = require('passport-twitter').Strategy;
+var TwitterTokenStrategy = require('passport-twitter-token-strategy');
+
 var User = require("../Models/userModel");
 var configAuth = require('./keys');
 
@@ -15,13 +18,43 @@ module.exports = function(passport) {
     });
   });
 
+
+    passport.use(new TwitterStrategy({
+      consumerKey     : configAuth.twitter.ClientID,
+      consumerSecret  : configAuth.twitter.ClientSecret
+      // callbackURL     : configAuth.twitter.callbackURL
+      },
+      function(token,tokenSecret,profile,done){
+        process.nextTick(function(){
+          console.log('in process.nextTick=>'+profile);
+          User.findOne({'OAuthId':'profile.id'},function(err,user){
+            if(err) return done(user);
+            if (user) {
+              return done(null,user);
+            }else{
+              var TwitterUser = new User({
+                OAuthId    : profile.id,
+                token : token,
+                name  : profile.displayName,
+                email:profile.username
+              });
+              TwitterUser.save(function(err){
+                if (err) throw err;
+
+                return done(null, newUser);
+              });
+            }
+          })
+        })
+    }));
+
     passport.use(new GoogleStrategy({
       clientID: configAuth.gplus.ClientID,
       clientSecret: configAuth.gplus.ClientSecret,
       callbackURL: configAuth.gplus.callbackURL
       },function(token, refreshToken, profile, done){
         process.nextTick(function(){
-          User.findOne({ 'google.id' : profile.id }, function(err, user) {
+          User.findOne({ 'OAuthId' : profile.id }, function(err, user) {
             if (err)
                 return done(err);
 
@@ -46,4 +79,5 @@ module.exports = function(passport) {
           })
         })
     }));
+
 };
