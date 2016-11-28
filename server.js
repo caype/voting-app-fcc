@@ -5,6 +5,7 @@ var session = require('express-session');
 var morgan  = require('morgan');
 var cookieParser = require('cookie-parser');
 var flash    = require('connect-flash');
+const bodyParser = require('body-parser');
 
 var app = new express();
 app.set('view engine','ejs');
@@ -14,6 +15,12 @@ require('./config/passport')(passport);
 
 mongoose.connect("mongodb://chaya:admin@ds149207.mlab.com:49207/freecodecamplearn");
 mongoose.Promise = global.Promise;
+
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+
+// parse application/json
+app.use(bodyParser.json())
 
 app.use(session({
 	secret: 'secretFCCsession',

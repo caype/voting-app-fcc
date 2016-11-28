@@ -1,6 +1,8 @@
 var express = require('express')
 var router = express.Router();
 var User = require("../Models/userModel");
+var Poll = require("../Models/pollModel");
+var GraphColors=["#2196f3", "#2ecc71", "#3498db", "#9b59b6", "#34495e", "#16a085", "#27ae60", "#2980b9", "#8e44ad", "#2c3e50", "#f1c40f", "#e67e22", "#e74c3c", "#ecf0f1", "#95a5a6", "#f39c12", "#d35400", "#c0392b", "#bdc3c7", "#7f8c8d"];
 
 function isAuthenticated(req,res,next){
   if (req.isAuthenticated()) {
@@ -19,12 +21,47 @@ module.exports = function(passport) {
         res.send(req.user);
     });
 
-    router.get('/create', function(req, res) {
+    router.post('/create',isAuthenticated,function(req,res){
+      var receivedPollData = req.body;
+      var PollsToArray = receivedPollData.options.map(function(CurrentPoll,index){
+        return {option:CurrentPoll,count:0,color:GraphColors[index]}
+      });
+      Poll.findOne({"description":receivedPollData.name},function(err,foundPoll){
+        if(err) throw err;
+        if(foundPoll){
+          res.send(JSON.stringify(foundPoll));
+        }else{
+          var curDate = new Date();
+          var newPoll = new Poll({
+            description:receivedPollData.name,
+            poll:PollsToArray,
+            createdData:curDate
+          });
+          newPoll.save(function(err,savedPoll){
+              if(err)  throw(err);
+              res.send(JSON.stringify(savedPoll));
+          });
+        }
+      })
+    });
+
+    router.post('/updatePoll',isAuthenticated,function(req,res){
+      var receivedUpdatedPollData = req.body;
+      Poll.findOne({_id:receivedUpdatedPollData._id},function(err,foundPollData){
+        foundPollData.poll = receivedUpdatedPollData.poll;
+        foundPollData.save(function(err){
+          res.send(JSON.stringify(foundPollData));
+        });
+      });
+    });
+
+    router.get('/create',isAuthenticated,function(req, res) {
         res.render('pages/createPoll');
     });
 
     router.get('/auth/google', passport.authenticate('google', {
-        scope: ['profile', 'email']
+      scope: [ 'https://www.googleapis.com/auth/userinfo.email',
+               'https://www.googleapis.com/auth/userinfo.profile']
     }));
 
     router.get('/auth/google/callback',
@@ -42,7 +79,7 @@ module.exports = function(passport) {
         }));
 
     router.get('/delete',function(req,res){
-      User.find({ id:333 }).remove().exec();
+      User.find({}).remove().exec();
       res.send('done');
     });
 

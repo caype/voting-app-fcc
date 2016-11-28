@@ -25,8 +25,8 @@ module.exports = function(passport) {
       // callbackURL     : configAuth.twitter.callbackURL
       },
       function(token,tokenSecret,profile,done){
+        debugger
         process.nextTick(function(){
-          console.log('in process.nextTick=>'+profile);
           User.findOne({'OAuthId':'profile.id'},function(err,user){
             if(err) return done(user);
             if (user) {
@@ -54,7 +54,7 @@ module.exports = function(passport) {
       callbackURL: configAuth.gplus.callbackURL
       },function(token, refreshToken, profile, done){
         process.nextTick(function(){
-          User.findOne({ 'OAuthId' : profile.id }, function(err, user) {
+          User.findOne({ 'email' : profile.emails[0].value }, function(err, user) {
             if (err)
                 return done(err);
 
