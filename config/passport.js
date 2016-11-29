@@ -1,6 +1,5 @@
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var TwitterStrategy  = require('passport-twitter').Strategy;
-var TwitterTokenStrategy = require('passport-twitter-token-strategy');
 
 var User = require("../Models/userModel");
 var configAuth = require('./keys');

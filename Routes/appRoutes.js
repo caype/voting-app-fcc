@@ -13,8 +13,17 @@ function isAuthenticated(req,res,next){
 
 module.exports = function(passport) {
 
+    router.get('/logoff',function(req,res){
+      req.logout();
+      res.redirect('/');
+    });
+
+    // router.get('/myPolls',function(req,res){
+    //   Poll.find({})
+    // })
+
     router.get('/', function(req, res) {
-        res.render('pages/home');
+        res.render('pages/home',{user:req.isAuthenticated()?req.user:null});
     });
 
     router.get('/profile', isAuthenticated, function(req, res) {
@@ -35,7 +44,8 @@ module.exports = function(passport) {
           var newPoll = new Poll({
             description:receivedPollData.name,
             poll:PollsToArray,
-            createdData:curDate
+            createdData:curDate,
+            createdById:req.user._id
           });
           newPoll.save(function(err,savedPoll){
               if(err)  throw(err);
