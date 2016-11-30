@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Voting App by Free Code Camp</title>
+    <%- include ../partials/styles.ejs %>
+</head>
+
+<body>
+
+  <%- include ../partials/header.ejs %>
+
+  <main>
+    <div class="container">
+      <% if(userPolls){ %>
+        <% for(var i=0;i<userPolls.length;i++){ %>
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <button id="deletePoll" type="button" class="close">&times;</button>
+              <div class="row">
+                <h3 class="text-center"><%= userPolls[i].description%></h3>
+                <hr>
+                <div class="im-centered">
+                  <ul class="nav nav-pills">
+                    <% for(var j=0;j<userPolls[i].poll.length;j++){ %>
+                        <li>
+                            <a href="#" style="color:<%= userPolls[i].poll[j].color %>"><%= userPolls[i].poll[j].option %>
+                              <span class="badge"><%= userPolls[i].poll[j].count%>
+                              </span>
+                            </a>
+                        </li>
+                    <% } %>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% } %>
+      <% } %>
+
+    </div>
+
+  </main>
+
+  <%- include ../partials/scripts.ejs %>
+</body>
+
+</html>

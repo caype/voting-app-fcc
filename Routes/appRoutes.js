@@ -2,7 +2,7 @@ var express = require('express')
 var router = express.Router();
 var User = require("../Models/userModel");
 var Poll = require("../Models/pollModel");
-var GraphColors=["#2196f3", "#2ecc71", "#3498db", "#9b59b6", "#34495e", "#16a085", "#27ae60", "#2980b9", "#8e44ad", "#2c3e50", "#f1c40f", "#e67e22", "#e74c3c", "#ecf0f1", "#95a5a6", "#f39c12", "#d35400", "#c0392b", "#bdc3c7", "#7f8c8d"];
+var GraphColors=["#2196f3", "#2ecc71", "#9b59b6", "#34495e", "#16a085", "#27ae60", "#2980b9", "#8e44ad", "#2c3e50", "#f1c40f", "#e67e22", "#e74c3c", "#ecf0f1", "#95a5a6", "#f39c12", "#d35400", "#c0392b", "#bdc3c7", "#7f8c8d"];
 
 function isAuthenticated(req,res,next){
   if (req.isAuthenticated()) {
@@ -18,9 +18,11 @@ module.exports = function(passport) {
       res.redirect('/');
     });
 
-    // router.get('/myPolls',function(req,res){
-    //   Poll.find({})
-    // })
+    router.get('/myPolls',isAuthenticated,function(req,res){
+      Poll.find({"createdById":req.user._id}, null, {sort: {'_id': -1}},function(err,foundRecords) {
+        res.render('pages/myPollList',{userPolls:foundRecords,user:req.isAuthenticated()?req.user:null});
+      });
+    });
 
     router.get('/', function(req, res) {
         res.render('pages/home',{user:req.isAuthenticated()?req.user:null});
@@ -66,7 +68,7 @@ module.exports = function(passport) {
     });
 
     router.get('/create',isAuthenticated,function(req, res) {
-        res.render('pages/createPoll');
+        res.render('pages/createPoll',{user:req.isAuthenticated()?req.user:null});
     });
 
     router.get('/auth/google', passport.authenticate('google', {
