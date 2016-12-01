@@ -17,6 +17,7 @@
         <% for(var i=0;i<userPolls.length;i++){ %>
           <div class="panel panel-default">
             <div class="panel-body">
+              <span id="<%= userPolls[i]._id%>" style="display:none"></span>
               <button id="deletePoll" type="button" class="close">&times;</button>
               <div class="row">
                 <h3 class="text-center"><%= userPolls[i].description%></h3>

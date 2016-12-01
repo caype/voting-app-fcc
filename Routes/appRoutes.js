@@ -24,6 +24,11 @@ module.exports = function(passport) {
       });
     });
 
+    router.get('/delete:id',function(req,res){
+      console.log(req.body);
+      res.send('reached');
+    })
+    
     router.get('/', function(req, res) {
         res.render('pages/home',{user:req.isAuthenticated()?req.user:null});
     });
