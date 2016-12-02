@@ -8,6 +8,7 @@ function isAuthenticated(req,res,next){
   if (req.isAuthenticated()) {
     return next();
   }
+  req.flash('error','Please login to access this page.')
   res.redirect('/');
 }
 
@@ -24,12 +25,17 @@ module.exports = function(passport) {
       });
     });
 
-    router.get('/delete:id',function(req,res){
-      console.log(req.body);
-      res.send('reached');
-    })
-    
+    router.post('/delete',function(req,res){
+      console.log(req.body.id);
+      Poll.remove({_id:req.body.id},function(err){
+        if(err)
+        res.status(500).send('failed! try again.');
+        res.status(200).send('success');
+      });
+    });
+
     router.get('/', function(req, res) {
+        console.log(req);
         res.render('pages/home',{user:req.isAuthenticated()?req.user:null});
     });
 
@@ -83,14 +89,24 @@ module.exports = function(passport) {
 
     router.get('/auth/google/callback',
         passport.authenticate('google', {
-            successRedirect: '/profile',
-            failureRedirect: '/'
+            successRedirect: '/myPolls',
+            failureRedirect: '/',
+            failureFlash:true
     }));
-
+    
     router.get('/auth/twitter', passport.authenticate('twitter'));
 
     router.get('/auth/twitter/callback',
         passport.authenticate('twitter', {
+            successRedirect : '/profile',
+            failureRedirect : '/'
+        }));
+
+    router.get('/auth/facebook', passport.authenticate('facebook', { scope : 'email' }));
+
+    // handle the callback after facebook has authenticated the user
+    router.get('/auth/facebook/callback',
+        passport.authenticate('facebook', {
             successRedirect : '/profile',
             failureRedirect : '/'
         }));

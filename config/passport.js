@@ -1,5 +1,6 @@
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var TwitterStrategy  = require('passport-twitter').Strategy;
+var FacebookStrategy = require('passport-facebook').Strategy;
 
 var User = require("../Models/userModel");
 var configAuth = require('./keys');
@@ -17,6 +18,33 @@ module.exports = function(passport) {
     });
   });
 
+    passport.use(new FacebookStrategy({
+      clientID     : configAuth.facebook.ClientID,
+      clientSecret  : configAuth.facebook.ClientSecret,
+      callbackURL     : configAuth.facebook.callbackURL,
+      profileFields: ['id', 'displayName', 'photos', 'email']
+    },
+    function(token,refreshToken,profile,done){
+      process.nextTick(function(){
+        User.findOne({'OAuthId':'profile.id'},function(err,user){
+          if(err) return done(user);
+          if (user) {
+            return done(null,user);
+          }else{
+            var FacebookUser = new User({
+              OAuthId    : profile.id,
+              token : token,
+              name  :  profile.name.givenName + ' ' + profile.name.familyName,
+              email:profile.emails[0].value
+            });
+            FacebookUser.save(function(err,newUser){
+              if (err) throw err;
+              return done(null, newUser);
+            });
+          }
+        });
+      });
+  }));
 
     passport.use(new TwitterStrategy({
       consumerKey     : configAuth.twitter.ClientID,
@@ -37,9 +65,8 @@ module.exports = function(passport) {
                 name  : profile.displayName,
                 email:profile.username
               });
-              TwitterUser.save(function(err){
+              TwitterUser.save(function(err,newUser){
                 if (err) throw err;
-
                 return done(null, newUser);
               });
             }

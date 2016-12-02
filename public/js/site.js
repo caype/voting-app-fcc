@@ -5,8 +5,22 @@ $("#addOption").click(function() {
     $("#moreOptions").append(newDiv);
 });
 
-$("#deletePoll").click(function(){
-  alert('okay!');
+$(".deletePoll").click(function(){
+  console.log($(this).prev().attr('id'));
+  var toSendJson = {id:$(this).prev().attr('id')}
+  $.ajax({
+    url:'/delete',
+    type:"POST",
+    data:JSON.stringify(toSendJson),
+    contentType:"application/json",
+    success:function(val){
+      alert(val);
+      $(location).attr('href','/myPolls');
+    },
+    error:function(val){
+      alert("error => "+val);
+    }
+  });
 });
 
 $("#submitPollResult").click(function(){
