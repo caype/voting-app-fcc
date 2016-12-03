@@ -4,11 +4,13 @@ var objectID = Schema.ObjectId;
 
 var pollSchema = new Schema({
     id: objectID,
+    uniqueId:Number,
     description: String,
     poll:[],
     createdData: Date,
     createdById:String,
-    voters:[]
+    AuthVoters:[],
+    NonAuthVoters:[]
 });
 
 module.exports = mongoose.model('poll', pollSchema);

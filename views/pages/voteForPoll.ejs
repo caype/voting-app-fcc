@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Create a POLL</title>
+    <%- include ../partials/styles.ejs %>
+</head>
+
+<body>
+
+    <%- include ../partials/header.ejs %>
+
+        <main>
+          <% if(pollData && pollData.description.length>0){ %>
+            <div class="col-md-6" id="fetchedPoll">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    <h4><%= pollData.description %></h4>
+                                </div>
+                                <br>
+                                <div class="form-group">
+                                    <select class="form-control" id="select">
+                                       <% for(var i=0;i<pollData.poll.length;i++){ %>
+                                          <option value='<%= pollData.poll[i].option%>'>
+                                            <%= pollData.poll[i].option%>
+                                          </option>
+                                        <% } %>
+                                        </select>
+                                </div>
+                                <br>
+                                <div class="form-group">
+                                    <button id="submitNewPollResult" class="btn btn-primary btn-lg btn-block">VOTE</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <% for(var i=0;i<pollData.poll.length;i++){ %>
+            <h3 style="display:none" class="Graphvalues"><%= pollData.poll[i].color%>+<%= pollData.poll[i].count%>+<%= pollData.poll[i].option%></h3>
+            <% } %>
+            <div class="col-md-4" id="fetchedPollResults" style="display:none">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <div class="col-md-12">
+                                    <canvas id="PollResult"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <% }else{ %>
+              <h3 class="text-danger text-center">Error fetching Poll. Try Again!</h3>
+              <% } %>
+        </main>
+
+        <%- include ../partials/scripts.ejs %>
+        <script type="text/javascript">
+          var colors=[],count=[],options=[];
+          $(".Graphvalues").each(function(){
+            var optionsArr=$(this).html().split('+');
+             colors.push(optionsArr[0]);
+             count.push(optionsArr[1]);
+             options.push(optionsArr[2]);
+          });
+          var data = {
+               labels: options,
+               datasets: [{
+                   data: count,
+                   backgroundColor: colors,
+                   hoverBackgroundColor: colors
+               }]
+           };
+           var ctx = document.getElementById("PollResult");
+           var targetChart = new Chart(ctx, {
+               data: data,
+               type: "pie"
+           });
+           $("#fetchedPollResults").show();
+           $( ".Graphvalues" ).remove();
+
+           //posting values to server
+           $("#submitNewPollResult").click(function(){
+
+           });
+        </script>
+</body>
+
+</html>

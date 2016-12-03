@@ -1,5 +1,6 @@
 var express = require('express')
 var router = express.Router();
+const helpers = require('../config/helpers');
 var User = require("../Models/userModel");
 var Poll = require("../Models/pollModel");
 var GraphColors=["#2196f3", "#2ecc71", "#9b59b6", "#34495e", "#16a085", "#27ae60", "#2980b9", "#8e44ad", "#2c3e50", "#f1c40f", "#e67e22", "#e74c3c", "#ecf0f1", "#95a5a6", "#f39c12", "#d35400", "#c0392b", "#bdc3c7", "#7f8c8d"];
@@ -19,11 +20,28 @@ module.exports = function(passport) {
       res.redirect('/');
     });
 
+    router.get('/allPolls',function(req,res){
+      Poll.find({},function(err,retrievedPolls){
+        if(err) res.status(500).send(null);
+        res.status(200).send(retrievedPolls);
+      });
+    });
+
     router.get('/myPolls',isAuthenticated,function(req,res){
       Poll.find({"createdById":req.user._id}, null, {sort: {'_id': -1}},function(err,foundRecords) {
         res.render('pages/myPollList',{userPolls:foundRecords,user:req.isAuthenticated()?req.user:null});
       });
     });
+
+    router.get('/poll/:pollId',function(req,res){
+       Poll.findOne({"uniqueId":req.params.pollId},function(err,foundPoll){
+         if(err) res.status(500).send('failed! try again.');
+
+         res.render('pages/voteForPoll',{user:req.isAuthenticated()?req.user:null,
+           pollData:foundPoll});
+       });
+    });
+    
 
     router.post('/delete',function(req,res){
       console.log(req.body.id);
@@ -35,7 +53,6 @@ module.exports = function(passport) {
     });
 
     router.get('/', function(req, res) {
-        console.log(req);
         res.render('pages/home',{user:req.isAuthenticated()?req.user:null});
     });
 
@@ -45,27 +62,32 @@ module.exports = function(passport) {
 
     router.post('/create',isAuthenticated,function(req,res){
       var receivedPollData = req.body;
-      var PollsToArray = receivedPollData.options.map(function(CurrentPoll,index){
-        return {option:CurrentPoll,count:0,color:GraphColors[index]}
-      });
       Poll.findOne({"description":receivedPollData.name},function(err,foundPoll){
         if(err) throw err;
         if(foundPoll){
+          console.log(foundPoll);
           res.send(JSON.stringify(foundPoll));
         }else{
-          var curDate = new Date();
-          var newPoll = new Poll({
-            description:receivedPollData.name,
-            poll:PollsToArray,
-            createdData:curDate,
-            createdById:req.user._id
-          });
-          newPoll.save(function(err,savedPoll){
-              if(err)  throw(err);
-              res.send(JSON.stringify(savedPoll));
-          });
+          if (receivedPollData.options != undefined) {
+            var curDate = new Date();
+            var PollsToArray = receivedPollData.options.map(function(CurrentPoll,index){
+              return {option:CurrentPoll,count:0,color:GraphColors[index]}
+            });
+            var newPoll = new Poll({
+              description:receivedPollData.name,
+              poll:PollsToArray,
+              uniqueId:helpers.generateRandomNumbers(),
+              createdData:curDate,
+              createdById:req.user._id,
+              AuthVoters:[helpers.getIp()]
+            });
+            newPoll.save(function(err,savedPoll){
+                if(err)  throw(err);
+                res.send(JSON.stringify(savedPoll));
+            });
+          }
         }
-      })
+      });
     });
 
     router.post('/updatePoll',isAuthenticated,function(req,res){
@@ -93,12 +115,12 @@ module.exports = function(passport) {
             failureRedirect: '/',
             failureFlash:true
     }));
-    
+
     router.get('/auth/twitter', passport.authenticate('twitter'));
 
     router.get('/auth/twitter/callback',
         passport.authenticate('twitter', {
-            successRedirect : '/profile',
+            successRedirect : '/myPolls',
             failureRedirect : '/'
         }));
 
@@ -107,7 +129,7 @@ module.exports = function(passport) {
     // handle the callback after facebook has authenticated the user
     router.get('/auth/facebook/callback',
         passport.authenticate('facebook', {
-            successRedirect : '/profile',
+            successRedirect : '/myPolls',
             failureRedirect : '/'
         }));
 

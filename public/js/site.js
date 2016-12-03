@@ -1,12 +1,24 @@
 // check code in this fiddle for smooth scrolling to sections : http://jsfiddle.net/ryXFt/3/
 
+function renderGraph(pollValues){
+  console.log(pollValues);
+}
+
+function loadPolls(pollList){
+  for (var i = 0; i < pollList.length; i++) {
+    var hrefUrl = "/poll/"+pollList[i].uniqueId;
+    var newPoll = $("<div class='panel panel-default'> <div class='panel-body'><a target=_blank href="+hrefUrl+"> <h4 class='text-center'>"+pollList[i].description+"</h4> </a></div> </div>");
+    $("#listOfPolls").append(newPoll);
+  }
+  $("#listOfPolls h3").hide();
+}
+
 $("#addOption").click(function() {
     var newDiv = $("<input type='text' class='form-control' id='options' placeholder='Enter Option detail'>");
     $("#moreOptions").append(newDiv);
 });
 
 $(".deletePoll").click(function(){
-  console.log($(this).prev().attr('id'));
   var toSendJson = {id:$(this).prev().attr('id')}
   $.ajax({
     url:'/delete',
@@ -25,9 +37,7 @@ $(".deletePoll").click(function(){
 
 $("#submitPollResult").click(function(){
  if (localStorage.getItem('PollJson')!= undefined || localStorage.getItem('PollJson')!= null) {
-   $("#voteForPoll .panel-default").css('background-color','#f3f3f3');
-   $('#voteForPoll input[type=text]').attr('disabled', true);
-   $('#voteForPoll a').attr('disabled', true);
+
    var RawPollJson = JSON.parse(localStorage.getItem('PollJson'));
    var EditedPollArray=RawPollJson.poll.map(function(pollOption){
      if(pollOption.option === $('#voteForPoll select').val()){
@@ -68,6 +78,10 @@ $("#submitPollResult").click(function(){
            type: "pie"
        });
 
+       $("#voteForPoll .panel-default").css('background-color','#f3f3f3');
+       $('#voteForPoll select').attr('disabled', true);
+       $('#voteForPoll button').attr('disabled', true);
+
        $("#pollResults").show();
      }
    })
@@ -76,13 +90,13 @@ $("#submitPollResult").click(function(){
 
 $("#submitCreatedPoll").click(function() {
   //background-color: #f3f3f3;
-  $("#createPoll .panel-default").css('background-color','#f3f3f3');
-  $('#createPoll input[type=text]').attr('disabled', true);
-  $('#createPoll a').attr('disabled', true);
+  debugger;
   $("#voteForPoll option").remove();
   var optionValues=[];
     $("#moreOptions").children('input').each(function(i) {
+      if ($(this).val()!= "") {
         optionValues.push($(this).val());
+      }
     });
     var dataToSend = JSON.stringify({name:$("#userPollDesc").val(),options:optionValues});
     $.ajax({
@@ -101,6 +115,9 @@ $("#submitCreatedPoll").click(function() {
               text:parsedVal.poll[i].option
           }));
         }
+        $("#createPoll .panel-default").css('background-color','#f3f3f3');
+        $('#createPoll input[type=text]').attr('disabled', true);
+        $('#createPoll button').attr('disabled', true);
         $("#voteForPoll").show();
       }
     });

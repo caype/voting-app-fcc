@@ -20,9 +20,29 @@
       </div>
     </div>
 
+    <div class="container-fluid" id="listOfPolls">
+      <h3 class="text-center">Loading the list of Polls</h3>
+
+    </div>
+
   </main>
 
   <%- include ../partials/scripts.ejs %>
+  <script type="text/javascript">
+    $(document).ready(function(){
+      $.ajax({
+        url:'/allPolls',
+        type:'GET',
+        success:function(val){
+          console.log(val);
+          loadPolls(val);
+        },
+        error:function(val){
+          console.log("error =>"+val);
+        }
+      })
+    })
+  </script>
 </body>
 
 </html>

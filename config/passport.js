@@ -26,7 +26,7 @@ module.exports = function(passport) {
     },
     function(token,refreshToken,profile,done){
       process.nextTick(function(){
-        User.findOne({'OAuthId':'profile.id'},function(err,user){
+        User.findOne({'OAuthId':profile.id},function(err,user){
           if(err) return done(user);
           if (user) {
             return done(null,user);
@@ -54,7 +54,7 @@ module.exports = function(passport) {
       function(token,tokenSecret,profile,done){
         debugger
         process.nextTick(function(){
-          User.findOne({'OAuthId':'profile.id'},function(err,user){
+          User.findOne({'OAuthId':profile.id},function(err,user){
             if(err) return done(user);
             if (user) {
               return done(null,user);
