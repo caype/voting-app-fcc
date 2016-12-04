@@ -19,11 +19,11 @@
                         <div class="panel panel-default">
                             <div class="panel-body">
                                 <div class="form-group">
-                                    <h4><%= pollData.description %></h4>
+                                    <h4 class="text-center"><%= pollData.description %></h4>
                                 </div>
                                 <br>
                                 <div class="form-group">
-                                    <select class="form-control" id="select">
+                                    <select class="form-control" id="selectedPoll">
                                        <% for(var i=0;i<pollData.poll.length;i++){ %>
                                           <option value='<%= pollData.poll[i].option%>'>
                                             <%= pollData.poll[i].option%>
@@ -88,7 +88,37 @@
 
            //posting values to server
            $("#submitNewPollResult").click(function(){
+              var dataToServer = {pollId:window.location.pathname.split('/')[2],selectedOption:$("#selectedPoll").val()}
+              $.ajax({
+                url:'/updatePoll',
+                type:"POST",
+                data:dataToServer,
+                success:function(val){
+                  console.log(val);
+                  var updatedPollObj = val;
+                  var labels=[],datasets=[],colors=[];
+                  for (var i = 0; i < updatedPollObj.poll.length; i++) {
+                    labels.push(updatedPollObj.poll[i].option)
+                    datasets.push(updatedPollObj.poll[i].count)
+                    colors.push(updatedPollObj.poll[i].color)
+                  };
 
+                 var data = {
+                      labels: labels,
+                      datasets: [{
+                          data: datasets,
+                          backgroundColor: colors,
+                          hoverBackgroundColor: colors
+                      }]
+                  };
+                  var ctx = document.getElementById("PollResult");
+                  var targetChart = new Chart(ctx, {
+                      data: data,
+                      type: "pie"
+                  });
+
+                }
+              })
            });
         </script>
 </body>

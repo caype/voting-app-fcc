@@ -41,7 +41,7 @@ module.exports = function(passport) {
            pollData:foundPoll});
        });
     });
-    
+
 
     router.post('/delete',function(req,res){
       console.log(req.body.id);
@@ -90,16 +90,16 @@ module.exports = function(passport) {
       });
     });
 
-    router.post('/updatePoll',isAuthenticated,function(req,res){
-      var receivedUpdatedPollData = req.body;
-      Poll.findOne({_id:receivedUpdatedPollData._id},function(err,foundPollData){
-        foundPollData.poll = receivedUpdatedPollData.poll;
-        foundPollData.save(function(err){
-          res.send(JSON.stringify(foundPollData));
+    router.post('/updatePoll',function(req,res){
+        var receivedUpdatedPollData = req.body;
+        Poll.findOneAndUpdate({"uniqueId":req.body.pollId,"poll.option":req.body.selectedOption},
+            {$push:{NonAuthVoters:helpers.getIp()},$inc:{"poll.$.count":1}}, {upsert:true,new:true}, function(err, updatedDoc){
+              if (err) return res.status(200).send(err);
+              console.log(updatedDoc);
+              return res.status(200).send(updatedDoc);
         });
-      });
     });
-
+    
     router.get('/create',isAuthenticated,function(req, res) {
         res.render('pages/createPoll',{user:req.isAuthenticated()?req.user:null});
     });

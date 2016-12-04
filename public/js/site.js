@@ -19,42 +19,34 @@ $("#addOption").click(function() {
 });
 
 $(".deletePoll").click(function(){
-  var toSendJson = {id:$(this).prev().attr('id')}
-  $.ajax({
-    url:'/delete',
-    type:"POST",
-    data:JSON.stringify(toSendJson),
-    contentType:"application/json",
-    success:function(val){
-      alert(val);
-      $(location).attr('href','/myPolls');
-    },
-    error:function(val){
-      alert("error => "+val);
-    }
+    var toSendJson = {id:$(this).prev().attr('id')}
+    $.ajax({
+      url:'/delete',
+      type:"POST",
+      data:JSON.stringify(toSendJson),
+      contentType:"application/json",
+      success:function(val){
+        alert(val);
+        $(location).attr('href','/myPolls');
+      },
+      error:function(val){
+        alert("error => "+val);
+      }
+    });
   });
-});
 
 $("#submitPollResult").click(function(){
  if (localStorage.getItem('PollJson')!= undefined || localStorage.getItem('PollJson')!= null) {
-
    var RawPollJson = JSON.parse(localStorage.getItem('PollJson'));
-   var EditedPollArray=RawPollJson.poll.map(function(pollOption){
-     if(pollOption.option === $('#voteForPoll select').val()){
-      pollOption.count = pollOption.count+1;
-      return pollOption;
-    }else{
-      return pollOption;
-    }
-   });
-   RawPollJson.poll = EditedPollArray;
+   var dataToServer = {pollId:RawPollJson.uniqueId,selectedOption:$("#select").val()};
+   console.log(dataToServer);
    $.ajax({
      url:'/updatePoll',
      type:"POST",
-     data:JSON.stringify(RawPollJson),
+     data:JSON.stringify(dataToServer),
      contentType:"application/json",
      success:function(updatedPoll){
-       var updatedPollObj = JSON.parse(updatedPoll);
+       var updatedPollObj = updatedPoll;
        var labels=[],datasets=[],colors=[];
        localStorage.setItem('PollJson',updatedPoll);
        for (var i = 0; i < updatedPollObj.poll.length; i++) {
@@ -62,7 +54,7 @@ $("#submitPollResult").click(function(){
          datasets.push(updatedPollObj.poll[i].count)
          colors.push(updatedPollObj.poll[i].color)
        };
-
+       
       var data = {
            labels: labels,
            datasets: [{
