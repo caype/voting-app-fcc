@@ -1,5 +1,5 @@
 var express = require("express");
-var favicon = require('serve-favicon');
+//var favicon = require('serve-favicon');
 var mongoose = require("mongoose");
 var passport = require("passport");
 var session = require('express-session');
@@ -9,7 +9,7 @@ var flash    = require('connect-flash');
 const bodyParser = require('body-parser');
 
 var app = new express();
-app.use(favicon(__dirname + '/public/favicon.ico'));
+//app.use(favicon(__dirname + '/public/favicon.ico'));
 app.set('view engine','ejs');
 app.use(express.static(__dirname+'/public'));
 
