@@ -16,10 +16,17 @@
     <div class="container-fluid">
       <div class="jumbotron">
           <h1 class="text-center">Voting App!</h1>
-          <h3 class="text-center"><a href="/create">CREATE </a>a poll or <a href="/polls">VOTE</a> for an existing poll</h3>
+          <h3 class="text-center">
+            <% if(user && user!=null){ %>
+            <a href="/create">CREATE </a>
+            <% } %>
+            <% if(!user && user == null){ %>
+              <a href="/create">LOGIN TO CREATE </a>
+              <% } %>
+            a poll or <a href="/polls">VOTE</a> for an existing poll</h3>
       </div>
     </div>
-
+    
     <div class="container-fluid" id="listOfPolls">
       <h3 class="text-center">Loading the list of Polls</h3>
 
@@ -34,7 +41,6 @@
         url:'/allPolls',
         type:'GET',
         success:function(val){
-          console.log(val);
           loadPolls(val);
         },
         error:function(val){

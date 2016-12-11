@@ -33,6 +33,13 @@ app.use(morgan('dev')); // log every request to the console
 app.use(cookieParser()); // read cookies (needed for auth)
 app.use(flash());
 
+app.use(function(req, res, next) {
+  res.locals.error_message = req.flash('error');
+	res.locals.success_message = req.flash('success');
+	res.locals.info_message = req.flash('info');
+  next();
+});
+
 app.use(passport.initialize());
 app.use(passport.session());
 

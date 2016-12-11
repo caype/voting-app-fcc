@@ -7,3 +7,16 @@ hr{
   background-image: linear-gradient(to right, rgba(0, 0, 0, 0), #0c84e4, rgba(0, 0, 0, 0));
 }
 .im-centered { margin: auto; max-width:700px;}
+
+#toast-container {
+    position: fixed;
+    z-index: 999999;
+}
+.toast-top-right {
+  top: 88px;
+  right: 15px;
+}
+.loginDropdown{
+  color: white !important;
+  font-size: 20px !important;
+}

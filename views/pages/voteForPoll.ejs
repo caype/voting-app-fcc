@@ -85,41 +85,54 @@
            });
            $("#fetchedPollResults").show();
            $( ".Graphvalues" ).remove();
-
-           //posting values to server
+           
            $("#submitNewPollResult").click(function(){
-              var dataToServer = {pollId:window.location.pathname.split('/')[2],selectedOption:$("#selectedPoll").val()}
-              $.ajax({
-                url:'/updatePoll',
-                type:"POST",
-                data:dataToServer,
-                success:function(val){
-                  console.log(val);
-                  var updatedPollObj = val;
-                  var labels=[],datasets=[],colors=[];
-                  for (var i = 0; i < updatedPollObj.poll.length; i++) {
-                    labels.push(updatedPollObj.poll[i].option)
-                    datasets.push(updatedPollObj.poll[i].count)
-                    colors.push(updatedPollObj.poll[i].color)
-                  };
-
-                 var data = {
-                      labels: labels,
-                      datasets: [{
-                          data: datasets,
-                          backgroundColor: colors,
-                          hoverBackgroundColor: colors
-                      }]
-                  };
-                  var ctx = document.getElementById("PollResult");
-                  var targetChart = new Chart(ctx, {
-                      data: data,
-                      type: "pie"
-                  });
-
-                }
-              })
+             var pollID = window.location.href.split('/')[window.location.href.split('/').length-1];
+             var dataToServer = {pollid:pollID};
+             $.ajax({
+               url:'/shouldVote',
+               type:"POST",
+               data:dataToServer,
+               success:function(val){
+                 var dataToSend = {pollId:window.location.pathname.split('/')[2],selectedOption:$("#selectedPoll").val()};
+                 if (val) {
+                   $.ajax({
+                     url:'/updatePoll',
+                     type:"POST",
+                     data:dataToSend,
+                     success:function(val){
+                       var updatedPollObj = val;
+                       var labels=[],datasets=[],colors=[];
+                       for (var i = 0; i < updatedPollObj.poll.length; i++) {
+                         labels.push(updatedPollObj.poll[i].option)
+                         datasets.push(updatedPollObj.poll[i].count)
+                         colors.push(updatedPollObj.poll[i].color)
+                       };
+                      var data = {
+                           labels: labels,
+                           datasets: [{
+                               data: datasets,
+                               backgroundColor: colors,
+                               hoverBackgroundColor: colors
+                           }]
+                       };
+                       var ctx = document.getElementById("PollResult");
+                       var targetChart = new Chart(ctx, {
+                           data: data,
+                           type: "pie"
+                       });
+                     }
+                   });
+                 }else{
+                   alert('oops! you have already voted. try voting for another poll');
+                 }
+               },
+               failed:function(val){
+                 alert('Some error occured. Please try again!');
+               }
+             });
            });
+
         </script>
 </body>
 

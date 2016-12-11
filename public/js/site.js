@@ -5,9 +5,10 @@ function renderGraph(pollValues){
 }
 
 function loadPolls(pollList){
+  var pollBadge=[];
   for (var i = 0; i < pollList.length; i++) {
     var hrefUrl = "/poll/"+pollList[i].uniqueId;
-    var newPoll = $("<div class='panel panel-default'> <div class='panel-body'><a target=_blank href="+hrefUrl+"> <h4 class='text-center'>"+pollList[i].description+"</h4> </a></div> </div>");
+    var newPoll = $("<div class='col-md-6'><div class='panel panel-default'> <div class='panel-body'><a target=_blank href="+hrefUrl+"> <h4 class='text-center'>"+pollList[i].description+"</h4> </a></div> </div></div>");
     $("#listOfPolls").append(newPoll);
   }
   $("#listOfPolls h3").hide();
@@ -54,7 +55,7 @@ $("#submitPollResult").click(function(){
          datasets.push(updatedPollObj.poll[i].count)
          colors.push(updatedPollObj.poll[i].color)
        };
-       
+
       var data = {
            labels: labels,
            datasets: [{
